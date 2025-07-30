@@ -1,9 +1,25 @@
-from sqlalchemy import Column, Integer, Float, String
-from .database import Base
+# Models da aplicação
 
-class PontoConfortoDB(Base):
-    __tablename__ = "pontos"
-    id = Column(Integer, primary_key=True, index=True)
-    lat = Column(Float, nullable=False)
-    long = Column(Float, nullable=False)
-    conforto = Column(String, nullable=False)
+from sqlmodel import SQLModel, Field
+from typing import Optional, List
+
+class NivelConforto(enumerate):
+    GOOD_ROAD = 1
+    BAD_ROAD  = 2
+
+# Coordenada com um nível de conforto específico
+class PontoConforto(SQLModel, table=True):
+    id: Optional[int] = Field(primary_key=True, index=True)
+    lat: float
+    long: float
+    conforto: NivelConforto
+    timestamp: float
+
+# Dados recebidos do front
+class Dados(SQLModel, table=False):
+    timestamp: float
+    lat: float
+    long: float
+    accValues: List[float]
+    gyroValues: List[float]
+    speed: float
