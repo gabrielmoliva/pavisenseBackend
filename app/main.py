@@ -46,7 +46,7 @@ async def websocket_endpoint(ws: WebSocket, session: Session = Depends(get_sessi
         buffer.clear()
 
 # TODO: fazer busca por região próxima ao usuário a fim de melhorar desempenho
-@app.get('/updatePontos', response_model=List[PontoConforto])
-async def update_pontos(session: Session = Depends(get_session)):
+@app.get('/getPontos', response_model=List[PontoConforto])
+async def get_pontos(session: Session = Depends(get_session)):
     pontos = session.exec(select(PontoConforto)).all()
     return pontos
