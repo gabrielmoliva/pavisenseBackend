@@ -2,8 +2,9 @@
 
 from sqlmodel import SQLModel, Field
 from typing import Optional, List
+from enum import Enum
 
-class NivelConforto(enumerate):
+class NivelConforto(int, Enum):
     GOOD_ROAD = 1
     BAD_ROAD  = 2
 
