@@ -14,6 +14,10 @@ init_db()
 
 model = joblib.load("model.joblib")
 
+# Constantes da aplicação
+MIN_SPEED_VALUE = 5,55  # m/s
+WINDOW_SIZE = 100       # tamanho da janela
+
 @app.websocket("/ws/sendData")
 async def websocket_endpoint(ws: WebSocket, session: Session = Depends(get_session)):
     await ws.accept()
@@ -23,12 +27,12 @@ async def websocket_endpoint(ws: WebSocket, session: Session = Depends(get_sessi
         while True:
             data = await ws.receive_json()
             dados = Dados(**data)
-            buffer.append(dados)
+            if (dados.speed>=MIN_SPEED_VALUE): 
+                buffer.append(dados)
 
             # talvez transformar em funcao separada async
-            resultados = []
-            while len(buffer) >= 100:
-                dados_janela = buffer[:100]
+            while len(buffer) >= WINDOW_SIZE:
+                dados_janela = buffer[:WINDOW_SIZE]
                 df = pd.DataFrame([d.model_dump() for d in dados_janela])
                 janela = df.drop(['speed', 'lat', 'long']).median()
                 janela = janela.join(df['speed'], how='right')
