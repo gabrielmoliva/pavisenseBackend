@@ -4,9 +4,9 @@ from sqlmodel import SQLModel, Field
 from typing import Optional, List
 from enum import Enum
 
-class NivelConforto(int, Enum):
-    GOOD_ROAD = 1
-    BAD_ROAD  = 2
+class NivelConforto (int, Enum):
+    GOOD_ROAD = 0
+    BAD_ROAD  = 1
 
 # Coordenada com um nível de conforto específico
 class PontoConforto(SQLModel, table=True):
@@ -21,6 +21,10 @@ class Dados(SQLModel, table=False):
     timestamp: float
     lat: float
     long: float
-    accValues: List[float]
-    gyroValues: List[float]
+    acc_x_std: float
+    acc_y_std: float
+    acc_z_std: float
+    gyro_x_std: float
+    gyro_y_std: float
+    gyro_z_std: float
     speed: float
