@@ -15,7 +15,7 @@ init_db()
 model = joblib.load("model.joblib")
 
 # Constantes da aplicação
-MIN_SPEED_VALUE = 0 #5.55  # m/s
+MIN_SPEED_VALUE = 5.55  # m/s
 WINDOW_SIZE = 101       # tamanho da janela
 
 def median(pontos: List[Dados]):
