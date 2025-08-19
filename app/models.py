@@ -28,3 +28,9 @@ class Dados(SQLModel, table=False):
     gyro_y_std: float
     gyro_z_std: float
     speed: float
+
+class Usuario(SQLModel, table=True):
+    id: Optional[int] = Field(primary_key=True, default=None)
+    login: str = Field(unique=True, nullable=False, index=True, max_length=50) 
+    email: Optional[str] = Field(default=None, nullable=True, max_length=50)
+    senha: str = Field(nullable=False, max_length=50)
