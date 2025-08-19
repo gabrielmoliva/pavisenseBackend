@@ -33,7 +33,7 @@ def median(pontos: List[Dados]):
 
 
 @app.websocket("/ws/sendData")
-async def websocket_endpoint(ws: WebSocket, session: Session = Depends(get_session)):
+async def websocket_endpoint(ws: WebSocket, db: db_dependency):
     await ws.accept()
     buffer: List[Dados] = []  # Armazena os dados recebidos por um cliente
 
@@ -71,7 +71,7 @@ async def websocket_endpoint(ws: WebSocket, session: Session = Depends(get_sessi
                     conforto=NivelConforto(int(predicao)),
                     timestamp=time.time(),
                 )
-                session.add(pontoConforto)
+                db.add(pontoConforto)
                 await ws.send_json(pontoConforto.model_dump())
                 buffer.pop(0)  # Remove o item mais antigo do buffer
 
@@ -82,8 +82,8 @@ async def websocket_endpoint(ws: WebSocket, session: Session = Depends(get_sessi
 
 # TODO: fazer busca por região próxima ao usuário a fim de melhorar desempenho
 @app.get("/getPontos", response_model=List[PontoConforto])
-async def get_pontos(session: Session = Depends(get_session)):
-    pontos = session.exec(select(PontoConforto)).all()
+async def get_pontos(db: db_dependency):
+    pontos = db.exec(select(PontoConforto)).all()
     return pontos
 
 
