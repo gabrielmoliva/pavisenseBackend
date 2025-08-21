@@ -11,6 +11,7 @@ class NivelConforto (int, Enum):
 # Coordenada com um nível de conforto específico
 class PontoConforto(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, index=True)
+    id_usuario: int = Field(foreign_key="usuario.id")
     lat: float
     long: float
     conforto: NivelConforto

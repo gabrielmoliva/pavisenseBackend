@@ -8,7 +8,7 @@ import app.auth as auth
 from starlette import status
 from typing import Annotated
 
-from app.models import Dados, PontoConforto, NivelConforto
+from app.models import Dados, PontoConforto, NivelConforto, Usuario
 from app.database import init_db, get_session
 from app.auth import get_current_user
 
@@ -32,8 +32,12 @@ def median(pontos: List[Dados]):
     return pontos[tam // 2]
 
 
-@app.websocket("/ws/sendData")
-async def websocket_endpoint(ws: WebSocket, db: db_dependency):
+@app.websocket("/ws/sendData/{user_id}")
+async def websocket_endpoint(ws: WebSocket, db: db_dependency, user_id: int):
+    usuario = db.exec(select(Usuario).where(Usuario.id == int(user_id))).first()
+    if (not usuario):
+        raise Exception("Id de usuário inválido")
+    
     await ws.accept()
     buffer: List[Dados] = []  # Armazena os dados recebidos por um cliente
 
@@ -66,12 +70,15 @@ async def websocket_endpoint(ws: WebSocket, db: db_dependency):
                 timestamp = ponto_mediano.timestamp
                 # TODO: verificar se o timestamp a ser guardado deve ser o de agora ou a mediana dos timestamps das coletas
                 pontoConforto = PontoConforto(
+                    id_usuario=user_id,
                     lat=float(lat),
                     long=float(long),
                     conforto=NivelConforto(int(predicao)),
                     timestamp=time.time(),
                 )
                 db.add(pontoConforto)
+                db.commit()
+                db.refresh(pontoConforto)
                 await ws.send_json(pontoConforto.model_dump())
                 buffer.pop(0)  # Remove o item mais antigo do buffer
 
