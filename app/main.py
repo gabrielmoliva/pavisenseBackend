@@ -47,6 +47,7 @@ async def websocket_endpoint(ws: WebSocket, db: db_dependency, user_id: int, mod
         while True:
             data = await ws.receive_json()
             dados = Dados(**data)
+            print(dados)
             if dados.speed < MIN_SPEED_VALUE:
                 continue
 
