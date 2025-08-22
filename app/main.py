@@ -20,8 +20,6 @@ init_db()
 db_dependency = Annotated[Session, Depends(get_session)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
-model = joblib.load("model.joblib")
-
 # Constantes da aplicação
 MIN_SPEED_VALUE = 5.55  # m/s
 WINDOW_SIZE = 101  # tamanho da janela
@@ -31,12 +29,16 @@ def median(pontos: List[Dados]):
     tam = len(pontos)
     return pontos[tam // 2]
 
-
-@app.websocket("/ws/sendData/{user_id}")
-async def websocket_endpoint(ws: WebSocket, db: db_dependency, user_id: int):
+@app.websocket("/ws/sendData/{user_id}/{model_info}")
+async def websocket_endpoint(ws: WebSocket, db: db_dependency, user_id: int, model_info: int = 0):
     usuario = db.exec(select(Usuario).where(Usuario.id == int(user_id))).first()
     if (not usuario):
         raise Exception("Id de usuário inválido")
+    
+    if (model_info==0):
+        model = joblib.load("model.joblib")
+    else:
+        model = joblib.load("mlp.joblib")
     
     await ws.accept()
     buffer: List[Dados] = []  # Armazena os dados recebidos por um cliente
