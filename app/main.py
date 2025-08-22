@@ -24,7 +24,6 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 MIN_SPEED_VALUE = 5.55  # m/s
 WINDOW_SIZE = 101  # tamanho da janela
 
-
 def median(pontos: List[Dados]):
     tam = len(pontos)
     return pontos[tam // 2]
@@ -47,7 +46,7 @@ async def websocket_endpoint(ws: WebSocket, db: db_dependency, user_id: int, mod
         while True:
             data = await ws.receive_json()
             dados = Dados(**data)
-            print(dados)
+            # print(dados)
             if dados.speed < MIN_SPEED_VALUE:
                 continue
 
