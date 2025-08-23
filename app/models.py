@@ -5,8 +5,8 @@ from typing import Optional, List
 from enum import Enum
 
 class NivelConforto (int, Enum):
-    GOOD_ROAD = 0
-    BAD_ROAD  = 1
+    GOOD_ROAD = 1
+    BAD_ROAD  = 0
 
 # Coordenada com um nível de conforto específico
 class PontoConforto(SQLModel, table=True):
